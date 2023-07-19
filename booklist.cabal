@@ -1,0 +1,110 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           booklist
+version:        0.1.0.0
+synopsis:       Lets you organize and restructure your (book) lists!
+description:    Please see the README on GitHub at <https://github.com/0xmycf/Booklist#readme>
+homepage:       https://github.com/0xmycf/listify#readme
+bug-reports:    https://github.com/0xmycf/listify/issues
+author:         0xmycf
+maintainer:     0xmycf
+copyright:      2023 0xmycf
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/0xmycf/listify
+
+library
+  exposed-modules:
+      Lib
+      Types
+  other-modules:
+      Paths_booklist
+  hs-source-dirs:
+      src
+  default-extensions:
+      MultiWayIf
+      BlockArguments
+      DerivingStrategies
+      LambdaCase
+      OverloadedStrings
+      OverloadedLabels
+      RecordWildCards
+      ExplicitNamespaces
+      GADTs
+      DataKinds
+      TypeFamilies
+      DeriveAnyClass
+      TemplateHaskell
+  ghc-options: -Wall
+  build-depends:
+      aeson
+    , aeson-pretty
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , lens
+    , linear
+    , mtl
+    , optics
+    , pandoc
+    , parsec
+    , split
+    , text
+    , transformers
+    , vector
+    , yaml
+  default-language: GHC2021
+
+executable booklist
+  main-is: Main.hs
+  other-modules:
+      Paths_booklist
+  hs-source-dirs:
+      app
+  default-extensions:
+      MultiWayIf
+      BlockArguments
+      DerivingStrategies
+      LambdaCase
+      OverloadedStrings
+      OverloadedLabels
+      RecordWildCards
+      ExplicitNamespaces
+      GADTs
+      DataKinds
+      TypeFamilies
+      DeriveAnyClass
+      TemplateHaskell
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N -O2
+  build-depends:
+      aeson
+    , aeson-pretty
+    , base >=4.7 && <5
+    , booklist
+    , bytestring
+    , containers
+    , filepath
+    , lens
+    , linear
+    , mtl
+    , optics
+    , pandoc
+    , parsec
+    , split
+    , text
+    , transformers
+    , vector
+    , yaml
+  default-language: GHC2021

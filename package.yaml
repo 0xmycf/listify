@@ -1,0 +1,69 @@
+version:             0.1.0.0
+author:              "0xmycf"
+name:                "booklist"
+github:              "0xmycf/listify"
+license:             "MIT"
+synopsis:            "Lets you organize and restructure your (book) lists!"
+copyright:           "2023 0xmycf"
+homepage:            https://github.com/0xmycf/listify#readme
+
+extra-source-files:
+- README.md          
+
+language: GHC2021
+default-extensions:
+  - MultiWayIf
+  - BlockArguments
+  - DerivingStrategies
+  - LambdaCase
+  - OverloadedStrings
+  - OverloadedLabels
+  - RecordWildCards
+  - ExplicitNamespaces
+  - GADTs
+  - DataKinds
+  - TypeFamilies
+  - DeriveAnyClass
+  - TemplateHaskell
+
+description: Please see the README on GitHub at <https://github.com/0xmycf/Booklist#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- bytestring
+- mtl
+- filepath
+- transformers
+- containers
+- parsec
+- linear
+- text
+- split
+- lens
+- optics
+- pandoc
+- aeson
+- aeson-pretty
+- yaml
+- vector
+
+ghc-options:
+- -Wall
+
+library:
+  source-dirs: src
+  dependencies:
+  - directory
+
+executables:
+  booklist:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -O2
+
+    dependencies:
+    - booklist

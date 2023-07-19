@@ -1,0 +1,13 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "Booklist:lib"
+
+    - path: "./app/Main.hs"
+      component: "Booklist:exe:Booklist-exe"
+
+    - path: "./app/Paths_Booklist.hs"
+      component: "Booklist:exe:Booklist-exe"
+
+    - path: "./test"
+      component: "Booklist:test:Booklist-test"
