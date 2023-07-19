@@ -12,6 +12,7 @@ The file you provide can be written in yaml or json.
 
 ## How to structure the file:
 
+```yaml
 Title:
   - author: Hans Wurst
     hasRead: false
@@ -23,10 +24,12 @@ Title:
     - Horror
     - Programming
     - Meat
+```
 
 If you'd rather make the entries by Genre or author you can simply switch
-  they keys eg.:
+  they keys eg. (but don't mix):
 
+```yaml
 Hans Wurst:
   - title: Hans Wurst
     hasRead: false
@@ -38,6 +41,7 @@ Hans Wurst:
     - Horror
     - Programming
     - Meat
+```
 
 Basically like this:
 
