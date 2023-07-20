@@ -40,6 +40,7 @@ runApp = do
 
   let file = args !! 1
       outpath = args ^? ix 2
+      doPdf = isSuffixOf "pdf" <$> outpath
 
   content <- BS.readFile file
   let oldNoSuffix = FP.dropExtension file
@@ -58,7 +59,29 @@ runApp = do
       intermidiary = mapToEntry $ M.mapKeys constructor mp
       sorted = entryToMap sort intermidiary
 
-  BS.writeFile outfile (YP.encodePretty config sorted)
+  if fromMaybe False doPdf
+    then do
+      let asPandoc = toPandoc sorted
+      -- result <- Pandoc.runIO (Pandoc.writeMarkdown def asPandoc) >>= Pandoc.handleError
+      result <- Pandoc.runIO $ do
+                template <- Pandoc.compileDefaultTemplate "latex"
+                result <- Pandoc.makePDF "xelatex" [] writeLaTeX (def {writerTemplate = Just template}) asPandoc
+                -- liftIO $ print result
+                case result of
+                  Left err      -> error $ show err
+                  Right content -> liftIO $ BL.writeFile outfile content
+
+        -- Left err      -> error $ show err
+        -- Right content -> pure $ BL.writeFile outfile content
+      case result of
+        Left err -> throw err
+        Right _  -> TIO.putStrLn "pandoc is cool"
+      -- BL.writeFile "test/out.md" result
+      -- TIO.writeFile "test/out.md" result
+      TIO.putStrLn "pandoc is cool"
+    else do
+      BS.writeFile outfile (YP.encodePretty config sorted)
+
   TIO.putStrLn $ "Wrote to: " <> T.pack outfile
   where config = YP.setConfDropNull True YP.defConfig
 
