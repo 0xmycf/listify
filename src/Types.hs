@@ -117,7 +117,6 @@ mapToEntry mp = S.toList $ M.foldrWithKey' go S.empty mp
                 ) `S.union` acc
 
               ByTitle title  -> setTo #title title
-              -- _ -> undefined
               ByNothing text -> S.fromList (avalues & each % #notes % coercedTo %~ \(oldNotes :: Maybe T.Text) ->
                 pure ( "Key value that could not get categorized: " <> text <> maybe "" ("\n\n" <>) oldNotes)) `S.union` acc
 
