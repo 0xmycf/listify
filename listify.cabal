@@ -55,6 +55,7 @@ library
     , containers
     , data-default
     , directory
+    , doctemplates
     , filepath
     , lens
     , linear
@@ -98,6 +99,7 @@ executable listify
     , bytestring
     , containers
     , data-default
+    , doctemplates
     , filepath
     , lens
     , linear

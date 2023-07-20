@@ -8,6 +8,8 @@ import           Control.Exception.Base (throw)
 import           Control.Monad          (when)
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.Identity (runIdentity)
+import           Data.Aeson             (KeyValue((.=)), object)
+import           Data.Bifunctor         (Bifunctor(second))
 import qualified Data.ByteString        as BS
 import qualified Data.ByteString.Lazy   as BL
 import           Data.Default           (def)
@@ -23,7 +25,10 @@ import           Optics                 (Ixed(ix), to, (%), (&), (^.), (^?))
 import           System.Environment     (getArgs)
 import           System.Exit            (exitFailure)
 import qualified System.FilePath        as FP
-import           Text.Pandoc            (writerTemplate)
+import           Text.DocTemplates      (Context(..), Doc(Text),
+                                         ToContext(toContext, toVal),
+                                         Val(SimpleVal))
+import           Text.Pandoc            (writerTemplate, writerVariables)
 import qualified Text.Pandoc            as Pandoc
 import qualified Text.Pandoc.PDF        as Pandoc
 import           Text.Pandoc.Writers    (writeLaTeX)
@@ -71,22 +76,21 @@ runApp = do
   if fromMaybe False doPdf
     then do
       let asPandoc = toPandoc sorted
+          options :: Context T.Text = toContext $ object [ "geometry" .= ("margin=1cm" :: T.Text) ]
       -- result <- Pandoc.runIO (Pandoc.writeMarkdown def asPandoc) >>= Pandoc.handleError
       result <- Pandoc.runIO $ do
                 template <- Pandoc.compileDefaultTemplate "latex"
-                result <- Pandoc.makePDF "xelatex" [] writeLaTeX (def {writerTemplate = Just template}) asPandoc
+                result <- Pandoc.makePDF "xelatex" [] writeLaTeX
+                  (def { writerTemplate = Just template
+                        , writerVariables = options }) asPandoc
                 -- liftIO $ print result
                 case result of
                   Left err       -> error $ show err
                   Right content' -> liftIO $ BL.writeFile outfile content'
 
-        -- Left err      -> error $ show err
-        -- Right content -> pure $ BL.writeFile outfile content
       case result of
         Left err -> throw err
         Right _  -> TIO.putStrLn "pandoc is cool"
-      -- BL.writeFile "test/out.md" result
-      -- TIO.writeFile "test/out.md" result
       TIO.putStrLn "pandoc is cool"
     else do
       BS.writeFile outfile (YP.encodePretty config sorted)
