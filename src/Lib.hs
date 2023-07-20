@@ -6,8 +6,12 @@ module Lib
   ) where
 import           Control.Exception.Base (throw)
 import           Control.Monad          (when)
+import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.Identity (runIdentity)
 import qualified Data.ByteString        as BS
+import qualified Data.ByteString.Lazy   as BL
+import           Data.Default           (def)
+import           Data.List              (isSuffixOf)
 import qualified Data.Map               as M
 import           Data.Maybe             (fromMaybe, isNothing)
 import qualified Data.Text              as T
@@ -19,6 +23,11 @@ import           Optics                 (Ixed(ix), to, (%), (&), (^.), (^?))
 import           System.Environment     (getArgs)
 import           System.Exit            (exitFailure)
 import qualified System.FilePath        as FP
+import           Text.Pandoc            (writerTemplate)
+import qualified Text.Pandoc            as Pandoc
+import qualified Text.Pandoc.PDF        as Pandoc
+import           Text.Pandoc.Writers    (writeLaTeX)
+import           ToPandoc               (toPandoc)
 import           Types                  (BookEntryM,
                                          BookEntryT(author, genres, title),
                                          ByT(ByAuthor, ByGenre, ByNothing, ByTitle),
@@ -68,8 +77,8 @@ runApp = do
                 result <- Pandoc.makePDF "xelatex" [] writeLaTeX (def {writerTemplate = Just template}) asPandoc
                 -- liftIO $ print result
                 case result of
-                  Left err      -> error $ show err
-                  Right content -> liftIO $ BL.writeFile outfile content
+                  Left err       -> error $ show err
+                  Right content' -> liftIO $ BL.writeFile outfile content'
 
         -- Left err      -> error $ show err
         -- Right content -> pure $ BL.writeFile outfile content
