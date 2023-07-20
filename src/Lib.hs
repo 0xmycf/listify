@@ -4,39 +4,25 @@
 module Lib
   ( runApp
   ) where
-import           Control.Exception         (Exception(displayException))
-import           Control.Exception.Base    (throw)
-import           Control.Monad             (when, (>=>))
-import           Control.Monad.IO.Class    (liftIO)
-import           Control.Monad.Identity    (runIdentity)
-import qualified Data.ByteString           as BS
-import qualified Data.ByteString.Lazy      as BL
-import           Data.Default              (def)
-import           Data.Either               (fromRight)
-import           Data.List                 (isPrefixOf, isSuffixOf)
-import           Data.List.Split           (endsWith)
-import qualified Data.List.Split           as C
-import qualified Data.Map                  as M
-import           Data.Maybe                (fromMaybe, isNothing)
-import qualified Data.Text                 as T
-import qualified Data.Text.IO              as TIO
-import qualified Data.Yaml                 as Y
-import           Data.Yaml.Pretty          as YP (defConfig, encodePretty,
-                                                  setConfDropNull)
-import           Optics                    (Ixed(ix), to, (%), (&), (^.), (^?))
-import           System.Environment        (getArgs)
-import           System.Exit               (exitFailure)
-import qualified System.FilePath           as FP
-import           Text.Pandoc               (writerTemplate)
-import qualified Text.Pandoc               as Pandoc
-import           Text.Pandoc.App           (Opt, optPdfEngineOpts)
-import qualified Text.Pandoc.PDF           as Pandoc
-import           Text.Pandoc.Writers.LaTeX (writeLaTeX)
-import           ToPandoc                  (mockPandoc, toPandoc)
-import           Types                     (BookEntryM,
-                                            BookEntryT(author, genres, title),
-                                            ByT(ByAuthor, ByGenre, ByNothing, ByTitle),
-                                            entryToMap, mapToEntry)
+import           Control.Exception.Base (throw)
+import           Control.Monad          (when)
+import           Control.Monad.Identity (runIdentity)
+import qualified Data.ByteString        as BS
+import qualified Data.Map               as M
+import           Data.Maybe             (fromMaybe, isNothing)
+import qualified Data.Text              as T
+import qualified Data.Text.IO           as TIO
+import qualified Data.Yaml              as Y
+import           Data.Yaml.Pretty       as YP (defConfig, encodePretty,
+                                               setConfDropNull)
+import           Optics                 (Ixed(ix), to, (%), (&), (^.), (^?))
+import           System.Environment     (getArgs)
+import           System.Exit            (exitFailure)
+import qualified System.FilePath        as FP
+import           Types                  (BookEntryM,
+                                         BookEntryT(author, genres, title),
+                                         ByT(ByAuthor, ByGenre, ByNothing, ByTitle),
+                                         entryToMap, mapToEntry)
 
 runApp :: IO ()
 runApp = do
@@ -53,6 +39,7 @@ runApp = do
               _        -> error "Sort options are: [author|genre|title]"
 
   let file = args !! 1
+      outpath = args ^? ix 2
 
   content <- BS.readFile file
   let oldNoSuffix = FP.dropExtension file
