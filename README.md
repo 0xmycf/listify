@@ -1,4 +1,4 @@
-# Booklist
+# Listify
 
 ## Usage:
 
@@ -27,7 +27,7 @@ Title:
 ```
 
 If you'd rather make the entries by Genre or author you can simply switch
-  they keys eg. (but don't mix):
+  they keys eg. (you can mix, but it will append the key to a notes field if all 3 keys are present):
 
 ```yaml
 Hans Wurst:
@@ -41,6 +41,10 @@ Hans Wurst:
     - Horror
     - Programming
     - Meat
+    notes: |
+      What a cool book!
+
+      I loved it!
 ```
 
 Basically like this:
@@ -55,6 +59,7 @@ data BookEntryT f
       , hasBought :: f Bool
       , author    :: f T.Text
       , genres    :: f [T.Text]
+      , notes     :: f (Maybe T.Text)
       }
   deriving (Generic)
 ```

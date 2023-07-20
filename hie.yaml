@@ -1,13 +1,10 @@
 cradle:
   stack:
     - path: "./src"
-      component: "Booklist:lib"
+      component: "listify:lib"
 
     - path: "./app/Main.hs"
-      component: "Booklist:exe:Booklist-exe"
+      component: "listify:exe:listify"
 
-    - path: "./app/Paths_Booklist.hs"
-      component: "Booklist:exe:Booklist-exe"
-
-    - path: "./test"
-      component: "Booklist:test:Booklist-test"
+    - path: "./app/Paths_listify.hs"
+      component: "listify:exe:listify"

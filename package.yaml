@@ -1,6 +1,6 @@
 version:             0.1.0.0
 author:              "0xmycf"
-name:                "booklist"
+name:                "listify"
 github:              "0xmycf/listify"
 license:             "MIT"
 synopsis:            "Lets you organize and restructure your (book) lists!"
@@ -26,7 +26,7 @@ default-extensions:
   - DeriveAnyClass
   - TemplateHaskell
 
-description: Please see the README on GitHub at <https://github.com/0xmycf/Booklist#readme>
+description: Please see the README on GitHub at <https://github.com/0xmycf/listify#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -42,10 +42,12 @@ dependencies:
 - lens
 - optics
 - pandoc
+- pandoc-types
 - aeson
 - aeson-pretty
 - yaml
 - vector
+- data-default
 
 ghc-options:
 - -Wall
@@ -56,7 +58,7 @@ library:
   - directory
 
 executables:
-  booklist:
+  listify:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -66,4 +68,4 @@ executables:
     - -O2
 
     dependencies:
-    - booklist
+    - listify

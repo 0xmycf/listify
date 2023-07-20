@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           booklist
+name:           listify
 version:        0.1.0.0
 synopsis:       Lets you organize and restructure your (book) lists!
-description:    Please see the README on GitHub at <https://github.com/0xmycf/Booklist#readme>
+description:    Please see the README on GitHub at <https://github.com/0xmycf/listify#readme>
 homepage:       https://github.com/0xmycf/listify#readme
 bug-reports:    https://github.com/0xmycf/listify/issues
 author:         0xmycf
@@ -26,9 +26,10 @@ source-repository head
 library
   exposed-modules:
       Lib
+      ToPandoc
       Types
   other-modules:
-      Paths_booklist
+      Paths_listify
   hs-source-dirs:
       src
   default-extensions:
@@ -52,6 +53,7 @@ library
     , base >=4.7 && <5
     , bytestring
     , containers
+    , data-default
     , directory
     , filepath
     , lens
@@ -59,6 +61,7 @@ library
     , mtl
     , optics
     , pandoc
+    , pandoc-types
     , parsec
     , split
     , text
@@ -67,10 +70,10 @@ library
     , yaml
   default-language: GHC2021
 
-executable booklist
+executable listify
   main-is: Main.hs
   other-modules:
-      Paths_booklist
+      Paths_listify
   hs-source-dirs:
       app
   default-extensions:
@@ -92,15 +95,17 @@ executable booklist
       aeson
     , aeson-pretty
     , base >=4.7 && <5
-    , booklist
     , bytestring
     , containers
+    , data-default
     , filepath
     , lens
     , linear
+    , listify
     , mtl
     , optics
     , pandoc
+    , pandoc-types
     , parsec
     , split
     , text
