@@ -1,5 +1,7 @@
 # Listify
 
+If you want to use the pdf option you need to have latex (xelatex) installed. This program also uses curl, so you might need curl too.
+
 ## Usage:
 
 ```
