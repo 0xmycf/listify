@@ -3,8 +3,8 @@
 ## Usage:
 
 ```
-$ booklist [author|genre|title] <filepath>[.yaml|.json]
-> Wrote to <filepath>-[author|title|genre]-new.yaml
+$ booklist [author|genre|title] <filepath>.[yaml|json] {<ouput-filename>.[yaml|pdf|md]}
+> Wrote to [<filepath>-[author|title|genre]-new.yaml|<output-filename>.[yaml|pdf|md]] 
 ```
 
 The file you provide can be written in yaml or json.

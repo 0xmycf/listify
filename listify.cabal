@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      ToPandoc
       Types
   other-modules:
       Paths_listify
@@ -52,8 +53,10 @@ library
     , base >=4.7 && <5
     , bytestring
     , containers
+    , curl
     , data-default
     , directory
+    , doctemplates
     , filepath
     , lens
     , linear
@@ -96,7 +99,9 @@ executable listify
     , base >=4.7 && <5
     , bytestring
     , containers
+    , curl
     , data-default
+    , doctemplates
     , filepath
     , lens
     , linear

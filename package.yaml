@@ -43,11 +43,13 @@ dependencies:
 - optics
 - pandoc
 - pandoc-types
+- doctemplates
 - aeson
 - aeson-pretty
 - yaml
 - vector
 - data-default
+- curl
 
 ghc-options:
 - -Wall
