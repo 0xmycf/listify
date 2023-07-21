@@ -5,15 +5,9 @@ module Lib
   ( runApp
   ) where
 import           Control.Exception.Base (throw)
-import           Control.Monad          (when)
-import           Control.Monad.IO.Class (liftIO)
+import           Control.Monad          (unless, when)
 import           Control.Monad.Identity (runIdentity)
-import           Data.Aeson             (KeyValue((.=)), object)
-import           Data.Bifunctor         (Bifunctor(second))
 import qualified Data.ByteString        as BS
-import qualified Data.ByteString.Lazy   as BL
-import           Data.Default           (def)
-import           Data.List              (isSuffixOf)
 import qualified Data.Map               as M
 import           Data.Maybe             (fromMaybe, isNothing)
 import qualified Data.Text              as T
@@ -21,18 +15,15 @@ import qualified Data.Text.IO           as TIO
 import qualified Data.Yaml              as Y
 import           Data.Yaml.Pretty       as YP (defConfig, encodePretty,
                                                setConfDropNull)
+import           Network.Curl           (CurlCode(CurlOK), curlGetString,
+                                         withCurlDo)
 import           Optics                 (Ixed(ix), to, (%), (&), (^.), (^?))
+import qualified System.Directory       as SD
 import           System.Environment     (getArgs)
 import           System.Exit            (exitFailure)
+import           System.FilePath
 import qualified System.FilePath        as FP
-import           Text.DocTemplates      (Context(..), Doc(Text),
-                                         ToContext(toContext, toVal),
-                                         Val(SimpleVal))
-import           Text.Pandoc            (writerTemplate, writerVariables)
-import qualified Text.Pandoc            as Pandoc
-import qualified Text.Pandoc.PDF        as Pandoc
-import           Text.Pandoc.Writers    (writeLaTeX)
-import           ToPandoc               (toPandoc)
+import           ToPandoc               (createMarkdown, createPDF)
 import           Types                  (BookEntryM,
                                          BookEntryT(author, genres, title),
                                          ByT(ByAuthor, ByGenre, ByNothing, ByTitle),
@@ -43,7 +34,7 @@ runApp = do
   args <- getArgs
 
   when (length args < 2) do
-    TIO.putStrLn "Usage: booklist [author|genre|title] <filepath>.[json|yaml] {<filepath-out>.[yaml|pdf]} "
+    TIO.putStrLn "Usage: booklist [author|genre|title] <filepath>.[json|yaml] {<filepath-out>.[yaml|pdf|md]} "
     exitFailure
 
   let sort = case head args of
@@ -51,10 +42,9 @@ runApp = do
               "genre"  -> ByGenre (^. #genres % to runIdentity)
               "title"  -> ByTitle (^. #title % to runIdentity)
               _        -> error "Sort options are: [author|genre|title]"
-
-  let file = args !! 1
+      file = args !! 1
       outpath = args ^? ix 2
-      doPdf = isSuffixOf "pdf" <$> outpath
+      extension = FP.takeExtension <$> outpath
 
   content <- BS.readFile file
   let oldNoSuffix = FP.dropExtension file
@@ -73,27 +63,21 @@ runApp = do
       intermidiary = mapToEntry $ M.mapKeys constructor mp
       sorted = entryToMap sort intermidiary
 
-  if fromMaybe False doPdf
-    then do
-      let asPandoc = toPandoc sorted
-          options :: Context T.Text = toContext $ object [ "geometry" .= ("margin=1cm" :: T.Text) ]
-      -- result <- Pandoc.runIO (Pandoc.writeMarkdown def asPandoc) >>= Pandoc.handleError
-      result <- Pandoc.runIO $ do
-                template <- Pandoc.compileDefaultTemplate "latex"
-                result <- Pandoc.makePDF "xelatex" [] writeLaTeX
-                  (def { writerTemplate = Just template
-                        , writerVariables = options }) asPandoc
-                -- liftIO $ print result
-                case result of
-                  Left err       -> error $ show err
-                  Right content' -> liftIO $ BL.writeFile outfile content'
+  path <- SD.getXdgDirectory SD.XdgCache "listify"
+  SD.createDirectoryIfMissing False path
+  let templatePath = path </> "template.tex"
+  doesTemplatePathExist <- SD.doesFileExist templatePath
+  unless doesTemplatePathExist $
+    withCurlDo $ do
+      (code, getResult) <- curlGetString "https://raw.githubusercontent.com/0xmycf/listify/main/template.tex" []
+      case code of
+        CurlOK -> writeFile templatePath getResult
+        _      -> error "Curl Error"
 
-      case result of
-        Left err -> throw err
-        Right _  -> TIO.putStrLn "pandoc is cool"
-      TIO.putStrLn "pandoc is cool"
-    else do
-      BS.writeFile outfile (YP.encodePretty config sorted)
+  case maybe "else" (drop 1) extension of
+    "pdf" -> createPDF outfile sorted (head args) templatePath
+    "md"  -> createMarkdown outfile sorted
+    _     -> BS.writeFile outfile (YP.encodePretty config sorted)
 
   TIO.putStrLn $ "Wrote to: " <> T.pack outfile
   where config = YP.setConfDropNull True YP.defConfig

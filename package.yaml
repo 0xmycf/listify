@@ -49,6 +49,7 @@ dependencies:
 - yaml
 - vector
 - data-default
+- curl
 
 ghc-options:
 - -Wall

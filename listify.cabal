@@ -53,6 +53,7 @@ library
     , base >=4.7 && <5
     , bytestring
     , containers
+    , curl
     , data-default
     , directory
     , doctemplates
@@ -98,6 +99,7 @@ executable listify
     , base >=4.7 && <5
     , bytestring
     , containers
+    , curl
     , data-default
     , doctemplates
     , filepath
